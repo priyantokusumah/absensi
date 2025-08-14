@@ -20,8 +20,10 @@ Sistem absensi otomatis berbasis web yang terintegrasi dengan MikroTik Hotspot. 
 *  Server OS: (Jika ada Linux/Windows disebutkan)
 
 # Flow Sistem
+<pre>
 <img width="1536" height="1024" alt="flow system" src="https://github.com/user-attachments/assets/eb1043bd-a84d-406b-a94d-633a3c31746e" />
-
+</pre>
+  
 # Instalasi
 *git clone https://github.com/username/phire-absensi.git
 *cd phire-absensi
