@@ -1,0 +1,10 @@
+cd C:\Program Files\Google\Chrome\Application
+
+chrome.exe --user-data-dir="C://Chrome dev session" --disable-web-security
+
+business: phibase-demo-2068663
+
+permission : [{"name":"Common","allAccess":true},{"name":"Commerce","allAccess":true},{"name":"Distribution","allAccess":true},{"name":"Manufacture","allAccess":true},{"name":"Quality Control","allAccess":true},{"name":"Maintenance","allAccess":true}]
+
+user-token : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NTcxNDY2YTU0NTViNDMwZDA2ZThjYjgiLCJmaXJzdE5hbWUiOiJTdXBlciIsImxhc3ROYW1lIjoiQWRtaW4iLCJlbWFpbCI6InJlc2t5YmF5dTIzNEBnbWFpbC5jb20iLCJwYXNzd29yZCI6ImQxZjI1ZGRkMTM3Yzk4ZDJkNWRkOWIxNDIzYTgwMDM1OTYzM2YxM2JmODhjZmMxODNmZDU5MDFiOTIzYTk2ZmQ5MWRjNmJhZTM0NDBhNjBjNzQxZjU3NTE1MjYwMmM1ZTQzNmQwM2Q3ZDYyOTdjMTAyNTU2NWUxYjMyNTQ1N2E5LmEzODY3NmYyMzcxM2Y3ZjYiLCJidXNpbmVzcyI6W3siYXBwIjoiVG9rbyBTcG9ydCIsImFwcElEIjoidG9rby1zcG9ydC04NTMyNTk1Iiwicm9sZSI6IlN1cGVyIEFkbWluIiwicm9sZVJlZiI6IjY1NzE0NjZhNTQ1NWI0MzBkMDZlOGNiNSIsIl9pZCI6IjY1NzE0NjZhNTQ1NWI0MzBkMDZlOGNiOSJ9XSwiYXBwcm92ZWQiOnRydWUsImNyZWF0ZWRBdCI6IjIwMjMtMTItMDdUMDQ6MTM6MzAuMDQ0WiIsInVwZGF0ZWRBdCI6IjIwMjMtMTItMThUMDc6MzI6MTIuNDA5WiIsImZ1bGxOYW1lIjoiU3VwZXIgQWRtaW4iLCJfX3YiOjAsImFkZHJlc3MiOiJKYWxhbiBLYXB1YXMgNyBuby40IiwicHJvcHMiOnt9LCJpYXQiOjE3MTU4NDMyODV9.E4p9v57oEhNbgIJbwqUnX0SYlgFNyas7n0MttQsVVW8"
+

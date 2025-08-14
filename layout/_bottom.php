@@ -1,7 +1,7 @@
 </div>
 <footer class="main-footer">
   <div class="footer-left">
-    Copyright &copy; 2021 Heri Hermawan</a>
+    Copyright &copy; 2025 Support Team Phire Studio</a>
   </div>
   <div class="footer-right">
 

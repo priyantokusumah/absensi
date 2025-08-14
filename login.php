@@ -1,39 +1,104 @@
 <?php
 require_once 'helper/connection.php';
 session_start();
-if (isset($_POST['submit'])) {
+
+// Atur timezone ke Asia/Jakarta
+date_default_timezone_set('Asia/Jakarta');
+
+$old_username = "";
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit'])) {
   $username = $_POST['username'];
   $password = $_POST['password'];
+  $old_username = $username;
 
-  $sql = "SELECT * FROM login WHERE username='$username' and password='$password' LIMIT 1";
-  $result = mysqli_query($connection, $sql);
+  // Cek user berdasarkan username
+  $sql_user = "SELECT * FROM pegawai WHERE username='$username' LIMIT 1";
+  $result_user = mysqli_query($connection, $sql_user);
 
-  $row = mysqli_fetch_assoc($result);
-  if ($row) {
-    $_SESSION['login'] = $row;
-    header('Location: index.php');
+  if ($result_user && mysqli_num_rows($result_user) > 0) {
+    $row_user = mysqli_fetch_assoc($result_user);
+
+    // Cek apakah password benar
+    if (password_verify($password, $row_user['password'])) {
+      
+      // Cek apakah status user
+     if ($row_user['status'] === 'Tidak Aktif') {
+      echo "<script>
+        document.addEventListener('DOMContentLoaded', function() {
+          Swal.fire({
+            icon: 'warning',
+            title: 'Login Gagal',
+            text: 'Akun Anda Sudah Tidak Aktif. Silahkan Hubungi Admin.'
+          });
+        });
+      </script>";
+    } elseif ($row_user['status'] === 'Pending') {
+      echo "<script>
+        document.addEventListener('DOMContentLoaded', function() {
+          Swal.fire({
+            icon: 'info',
+            title: 'Login Tertunda',
+            text: 'Akun Anda sedang menunggu persetujuan. Silakan tunggu atau hubungi Admin.'
+          });
+        });
+      </script>";
+
+      } else {
+        // Set session jika login sukses
+        $_SESSION['login'] = true;
+        $_SESSION['role'] = $row_user['role'];
+        $_SESSION['username'] = $row_user['username'];
+        $_SESSION['id_pegawai'] = $row_user['id_pegawai'];
+
+        // Redirect sesuai role
+        if ($row_user['role'] == 'Karyawan') {
+          header('Location: /phire_absensi/karyawan/index.php');
+        } elseif ($row_user['role'] == 'Manajemen') {
+          header('Location: /phire_absensi/admin/index.php');
+        }
+        exit();
+      }
+    } else {
+      echo "<script>
+        document.addEventListener('DOMContentLoaded', function() {
+          Swal.fire({
+            icon: 'error',
+            title: 'Login Gagal',
+            text: 'Username atau Password salah!'
+          });
+        });
+      </script>";
+    }
+  } else {
+    echo "<script>
+      document.addEventListener('DOMContentLoaded', function() {
+        Swal.fire({
+          icon: 'error',
+          title: 'Login Gagal',
+          text: 'User tidak ditemukan!'
+        });
+      });
+    </script>";
   }
 }
 ?>
 
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
   <meta charset="UTF-8">
   <meta content="width=device-width, initial-scale=1, maximum-scale=1, shrink-to-fit=no" name="viewport">
-  <title>Login &mdash; STMIK IDS</title>
+  <title>Login Absensi Phire Studio</title>
 
-  <!-- General CSS Files -->
-  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
-
-  <!-- CSS Libraries -->
-  <link rel="stylesheet" href="assets/modules/bootstrap-social/bootstrap-social.css">
-
-  <!-- Template CSS -->
+  <!-- CSS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@sweetalert2/theme-bootstrap-4/bootstrap-4.min.css">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" crossorigin="anonymous">
   <link rel="stylesheet" href="assets/css/style.css">
   <link rel="stylesheet" href="assets/css/components.css">
+
+  <!-- SweetAlert2 -->
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 
 <body>
@@ -42,53 +107,49 @@ if (isset($_POST['submit'])) {
       <div class="container mt-5">
         <div class="row">
           <div class="col-12 col-sm-8 offset-sm-2 col-md-6 offset-md-3 col-lg-6 offset-lg-3 col-xl-4 offset-xl-4">
-            <div class="login-brand">
-              <img src="https://ids.ac.id/wp-content/uploads/2019/11/Logo-IDS-College.png" alt="logo" width="300">
-            </div>
-
             <div class="card card-primary">
+              <div class="login-brand">
+                <img src="./img/image.jpeg" alt="image" width="50%">
+              </div>
+
               <div class="card-header">
-                <h4>Login Admin</h4>
+                <h4 class="text-center">Login Absensi Phire Studio</h4>
               </div>
 
               <div class="card-body">
                 <form method="POST" action="" class="needs-validation" novalidate="">
                   <div class="form-group">
                     <label for="username">Username</label>
-                    <input id="username" type="text" class="form-control" name="username" tabindex="1" required autofocus>
+                    <input id="username" type="text" class="form-control" name="username" required autofocus value="<?php echo htmlspecialchars($old_username); ?>">
                     <div class="invalid-feedback">
                       Mohon isi username
                     </div>
                   </div>
 
                   <div class="form-group">
-                    <div class="d-block">
-                      <label for="password" class="control-label">Password</label>
+                    <label for="password">Password</label>
+                    <div class="input-group">
+                      <input id="password" type="password" class="form-control" name="password" required>
+                      <div class="input-group-append">
+                        <button type="button" id="togglePassword">
+                          <i class="fa fa-eye-slash"></i>
+                        </button>
+                      </div>
                     </div>
-                    <input id="password" type="password" class="form-control" name="password" tabindex="2" required>
                     <div class="invalid-feedback">
                       Mohon isi kata sandi
                     </div>
                   </div>
 
                   <div class="form-group">
-                    <div class="custom-control custom-checkbox">
-                      <input type="checkbox" name="remember" class="custom-control-input" tabindex="3" id="remember-me">
-                      <label class="custom-control-label" for="remember-me">Ingat Saya</label>
-                    </div>
-                  </div>
-
-                  <div class="form-group">
-                    <button name="submit" type="submit" class="btn btn-primary btn-lg btn-block" tabindex="3">
-                      Login
-                    </button>
+                    <button name="submit" type="submit" class="btn btn-primary btn-lg btn-block">LOGIN</button>
                   </div>
                 </form>
-
               </div>
             </div>
+
             <div class="simple-footer">
-              Copyright &copy; Heri Hermawan 2021
+              Copyright &copy; 2025 Support Team Phire Studio
             </div>
           </div>
         </div>
@@ -96,21 +157,47 @@ if (isset($_POST['submit'])) {
     </section>
   </div>
 
-  <!-- General JS Scripts -->
-  <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
-  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.nicescroll/3.7.6/jquery.nicescroll.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
-  <script src="assets/js/stisla.js"></script>
+  <!-- JS -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <style>
+    #togglePassword {
+      border: none;
+      background: none;
+      cursor: pointer;
+      padding: 0 10px;
+      display: flex;
+      align-items: center;
+    }
 
-  <!-- JS Libraies -->
+    #togglePassword i {
+      font-size: 18px;
+      color: #6c757d;
+    }
 
-  <!-- Template JS File -->
-  <script src="assets/js/scripts.js"></script>
-  <script src="assets/js/custom.js"></script>
+    #togglePassword:focus {
+      outline: none;
+      box-shadow: none;
+    }
+  </style>
 
-  <!-- Page Specific JS File -->
+  <script>
+    document.getElementById("togglePassword").addEventListener("click", function () {
+      let passwordField = document.getElementById("password");
+      let icon = this.querySelector("i");
+
+      if (passwordField.type === "password") {
+        passwordField.type = "text";
+        icon.classList.remove("fa-eye-slash");
+        icon.classList.add("fa-eye");
+      } else {
+        passwordField.type = "password";
+        icon.classList.remove("fa-eye");
+        icon.classList.add("fa-eye-slash");
+      }
+    });
+  </script>
+
+  <script src="https://code.jquery.com/jquery-3.3.1.min.js" crossorigin="anonymous"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" crossorigin="anonymous"></script>
 </body>
-
 </html>

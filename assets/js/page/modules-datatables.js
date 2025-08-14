@@ -6,14 +6,8 @@ $("[data-checkboxes]").each(function () {
     role = me.data("checkbox-role");
 
   me.change(function () {
-    var all = $(
-        '[data-checkboxes="' + group + '"]:not([data-checkbox-role="dad"])'
-      ),
-      checked = $(
-        '[data-checkboxes="' +
-          group +
-          '"]:not([data-checkbox-role="dad"]):checked'
-      ),
+    var all = $( '[data-checkboxes="' + group + '"]:not([data-checkbox-role="dad"])' ),
+      checked = $( '[data-checkboxes="' + group + '"]:not([data-checkbox-role="dad"]):checked' ),
       dad = $('[data-checkboxes="' + group + '"][data-checkbox-role="dad"]'),
       total = all.length,
       checked_length = checked.length;
@@ -34,7 +28,36 @@ $("[data-checkboxes]").each(function () {
   });
 });
 
-$("#table-1").dataTable();
-$("#table-2").dataTable({
-  columnDefs: [{ sortable: false, targets: [0, 2, 3] }],
+// Hapus instance DataTables lama sebelum inisialisasi ulang
+$("#table-1").DataTable().destroy();
+$("#table-2").DataTable().destroy();
+
+// Inisialisasi DataTables tanpa filter pencarian
+$("#table-1").DataTable({
+  "destroy": true,    // Pastikan bisa di-refresh ulang
+  "searching": true, // Hilangkan fitur pencarian
+  "paging": true,     // Aktifkan pagination
+  "ordering": false,   // Bisa diurutkan
+  "info": false,      // Sembunyikan info jumlah data
+  "lengthChange": true, // Hilangkan dropdown jumlah data per halaman
+  "pageLength": 10,   // Tampilkan 10 data per halaman
+  "language": {
+    "paginate": {
+      "first": "Awal",
+      "last": "Akhir",
+      "next": "Berikutnya",
+      "previous": "Sebelumnya"
+    }
+  }
+});
+
+$("#table-2").DataTable({
+  "destroy": true,
+  "searching": true,
+  "paging": true,
+  "ordering": false,
+  "info": false,
+  "lengthChange": false,
+  "pageLength": 10,
+  columnDefs: [{ sortable: false, targets: [0, 2, 3] }]
 });
