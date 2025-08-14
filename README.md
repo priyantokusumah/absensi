@@ -7,7 +7,8 @@ Sistem absensi otomatis berbasis web yang terintegrasi dengan MikroTik Hotspot. 
 *  Login dan Logout absensi tanpa input manual.
 *  Login dan Logout absensi tanpa input manual.
 *  Export laporan ke PDF.
-*  Export laporan ke PDF.
+*  Auto logout jika perangkat tidak terdeteksi.
+
 //note : masih dalam tahap pengembangan//
 
 
